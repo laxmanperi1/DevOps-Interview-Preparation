@@ -1,12 +1,29 @@
 # DevOps Interview Preparation
 
-Portfolio repository covering core DevOps skills: containerization, Kubernetes, GitOps, monitoring, infrastructure as code, and CI/CD.
+Interview preparation hub — scenario-based Q&A, diagrams, and links to hands-on DevOps projects.
 
-## Projects
+## Interview guide
 
-### 1. Express API (`express-api/`)
+📖 **[INTERVIEW-QA.md](./INTERVIEW-QA.md)** — 40+ scenario-based questions with answers, mermaid diagrams, and commands tied to real projects.
 
-Node.js REST API with production-ready DevOps practices.
+Topics covered:
+- CI/CD & GitOps
+- Docker & Kubernetes troubleshooting
+- ArgoCD & Kustomize overlays
+- Terraform & AWS EKS
+- Prometheus/Grafana incident response
+- DevSecOps scenarios
+- Mock interview round
+
+---
+
+## Hands-on projects (separate repos)
+
+These projects are **not duplicated here** — clone them individually:
+
+### 1. [express-api](https://github.com/laxmanperi1/express-api)
+
+Node.js REST API with full DevOps stack.
 
 | Area | Tech |
 |------|------|
@@ -17,15 +34,14 @@ Node.js REST API with production-ready DevOps practices.
 | Monitoring | Prometheus, Grafana, Alertmanager, CPU alerts |
 | CI/CD | GitHub Actions (test, Trivy scan, manifest validation) |
 
-**Quick start:**
 ```bash
+git clone https://github.com/laxmanperi1/express-api.git
 cd express-api
 npm install && npm test
-docker build -t express-api:1.0.0 .
 kubectl apply -k deploy/overlays/dev
 ```
 
-### 2. EKS Terraform (`eks-terraform/`)
+### 2. [eks-terraform](https://github.com/laxmanperi1/eks-terraform)
 
 AWS EKS cluster with VPC, managed node group, and security hardening.
 
@@ -35,15 +51,26 @@ AWS EKS cluster with VPC, managed node group, and security hardening.
 | EKS | Managed node group, KMS encryption, audit logging |
 | Security | IMDSv2, configurable API endpoint CIDRs |
 
-**Quick start:**
 ```bash
+git clone https://github.com/laxmanperi1/eks-terraform.git
 cd eks-terraform
-terraform init
-terraform plan
-terraform apply
+terraform init && terraform plan
 ```
 
-## Skills demonstrated
+---
+
+## This repo contains
+
+```
+.
+├── README.md           # This file — project links
+├── INTERVIEW-QA.md     # Scenario-based interview Q&A with diagrams
+└── push-to-github.sh   # Helper script
+```
+
+---
+
+## Skills demonstrated (across all projects)
 
 - **Containers & Docker** — Multi-stage builds, image scanning, health checks
 - **Kubernetes** — Deployments, Services, Ingress, TLS, PDB, NetworkPolicy
@@ -53,18 +80,7 @@ terraform apply
 - **CI/CD** — GitHub Actions pipelines
 - **Security** — Non-root containers, secrets management, DevSecOps hardening
 
-## Repository structure
-
-```
-.
-├── express-api/          # Full-stack app + K8s + ArgoCD + monitoring
-│   ├── src/              # Application code
-│   ├── deploy/           # Kustomize base + dev/prod overlays
-│   ├── argocd/           # ArgoCD Application manifests
-│   ├── monitoring/       # Prometheus/Grafana config
-│   └── .github/          # CI workflows
-└── eks-terraform/        # AWS EKS infrastructure
-```
+---
 
 ## Author
 
