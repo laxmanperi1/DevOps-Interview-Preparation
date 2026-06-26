@@ -1,0 +1,87 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: express-api-alerts
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: express-api
+      rules:
+        - alert: ExpressApiDown
+          expr: |
+            up{namespace="express-api", service="express-api"} == 0
+          for: 1m
+          labels:
+            severity: critical
+            app: express-api
+          annotations:
+            summary: "Express-api target is down"
+            description: "Prometheus cannot scrape express-api metrics."
+
+        - alert: ExpressApiHighMemory
+          expr: |
+            sum by (pod) (
+              process_resident_memory_bytes{namespace="express-api"}
+            ) > 200000000
+          for: 2m
+          labels:
+            severity: warning
+            app: express-api
+          annotations:
+            summary: "High memory usage on express-api pod {{ $labels.pod }}"
+            description: >-
+              Pod {{ $labels.pod }} memory usage exceeds 200MB for more than 2 minutes.
+
+        - alert: ExpressApiHighCPU
+          expr: |
+            sum by (pod) (
+              rate(process_cpu_seconds_total{namespace="express-api"}[5m])
+            ) > 0.2
+          for: 2m
+          labels:
+            severity: warning
+            app: express-api
+          annotations:
+            summary: "High CPU usage on express-api pod {{ $labels.pod }}"
+            description: >-
+              Pod {{ $labels.pod }} in namespace express-api is using
+              {{ printf "%.2f" $value }} CPU cores for more than 2 minutes.
+              Threshold is 0.2 cores (80% of the 250m CPU limit).
+
+        - alert: ExpressApiHighCPUPercent
+          expr: |
+            (
+              sum by (pod) (
+                rate(container_cpu_usage_seconds_total{namespace="express-api", container="express-api"}[5m])
+              )
+              /
+              sum by (pod) (
+                kube_pod_container_resource_limits{namespace="express-api", container="express-api", resource="cpu"}
+              )
+            ) > 0.8
+          for: 2m
+          labels:
+            severity: warning
+            app: express-api
+          annotations:
+            summary: "Express-api pod {{ $labels.pod }} CPU above 80% of limit"
+            description: >-
+              Pod {{ $labels.pod }} is at {{ printf "%.0f" $value }}% of its CPU limit
+              for more than 2 minutes.
+
+        - alert: ExpressApiCriticalCPU
+          expr: |
+            sum by (pod) (
+              rate(process_cpu_seconds_total{namespace="express-api"}[5m])
+            ) > 0.23
+          for: 1m
+          labels:
+            severity: critical
+            app: express-api
+          annotations:
+            summary: "Critical CPU usage on express-api pod {{ $labels.pod }}"
+            description: >-
+              Pod {{ $labels.pod }} is near or at its CPU limit
+              ({{ printf "%.2f" $value }} cores). Immediate action recommended.

@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: express-api
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: express-api-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  description: Express API GitOps project
+  sourceRepos:
+    - https://github.com/laxmanperi1/express-api.git
+    - https://prometheus-community.github.io/helm-charts
+  destinations:
+    - namespace: express-api
+      server: https://kubernetes.default.svc
+    - namespace: express-api-prod
+      server: https://kubernetes.default.svc
+    - namespace: monitoring
+      server: https://kubernetes.default.svc
+    - namespace: argocd
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: cert-manager.io
+      kind: ClusterIssuer
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
